@@ -19,5 +19,6 @@
 	},
 	"bin": {
 		"create-templates": "./index.js"
-	}
+	},
+	"repository": "https://github.com/CheesyPhoenix/templates"
 }
