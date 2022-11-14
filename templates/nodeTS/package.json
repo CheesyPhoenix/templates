@@ -1,0 +1,15 @@
+{
+	"name": "$NAME",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.ts",
+	"scripts": {
+		"start": "ts-node ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"ts-node": "^10.9.1"
+	}
+}
