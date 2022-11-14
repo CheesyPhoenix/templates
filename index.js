@@ -1,7 +1,11 @@
 #! /usr/bin/env node
 import fs from "fs";
 import inquirer from "inquirer";
-const choices = fs.readdirSync("./templates");
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const choices = fs.readdirSync(__dirname + "/templates");
 console.clear();
 const questions = [
     {
@@ -45,4 +49,4 @@ function createDirectoryContents(templatePath, newProjectPath, name) {
         }
     });
 }
-createDirectoryContents(`./templates/${answers["template"]}`, answers["name"], answers["name"]);
+createDirectoryContents(__dirname + `/templates/${answers["template"]}`, answers["name"], answers["name"]);

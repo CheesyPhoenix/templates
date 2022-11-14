@@ -2,8 +2,14 @@
 
 import fs from "fs";
 import inquirer, { QuestionCollection } from "inquirer";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const choices = fs.readdirSync("./templates");
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
+const choices = fs.readdirSync(__dirname + "/templates");
 
 console.clear();
 
@@ -67,7 +73,7 @@ function createDirectoryContents(
 }
 
 createDirectoryContents(
-	`./templates/${answers["template"]}`,
+	__dirname + `/templates/${answers["template"]}`,
 	answers["name"],
 	answers["name"]
 );
