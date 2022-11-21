@@ -1,0 +1,10 @@
+body{
+    color: white;
+    background-color: black;
+}
+
+.content p {
+    padding: 20px;
+    background-color: grey;
+    margin: 20px;
+}
