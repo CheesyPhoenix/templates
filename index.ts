@@ -4,6 +4,7 @@ import fs from "fs";
 import inquirer, { QuestionCollection } from "inquirer";
 import path from "path";
 import { fileURLToPath } from "url";
+import { exec } from "child_process";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -77,3 +78,27 @@ createDirectoryContents(
 	answers["name"],
 	answers["name"]
 );
+
+if (
+	fs
+		.readdirSync(__dirname + `/templates/${answers["template"]}`)
+		.includes("package.json")
+) {
+	console.log("Trying to run 'npm install' for you...");
+
+	exec(
+		"npm i",
+		{ cwd: CURR_DIR + "/" + answers["name"] },
+		(error, stdout, stderr) => {
+			if (error) {
+				console.log(`error: ${error.message}`);
+				return;
+			}
+			if (stderr) {
+				console.log(`stderr: ${stderr}`);
+				return;
+			}
+			console.log(`stdout: ${stdout}`);
+		}
+	);
+}
