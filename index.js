@@ -6,15 +6,40 @@ import { fileURLToPath } from "url";
 import { exec } from "child_process";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const choices = fs.readdirSync(__dirname + "/templates");
 console.clear();
-const questions = [
-    {
-        name: "template",
-        type: "list",
-        message: "What project template would you like to generate?",
-        choices,
-    },
+let settings = { type: "sub-category" };
+let currPath = "";
+while (true) {
+    let choices = fs
+        .readdirSync(__dirname + "/templates/" + currPath, {
+        withFileTypes: true,
+    })
+        .filter((el) => el.isDirectory());
+    const questions = [
+        {
+            name: "template",
+            type: "list",
+            message: "Choose a template",
+            choices,
+        },
+    ];
+    const answers = await inquirer.prompt(questions);
+    console.log(path.join("file://" + __dirname, "/templates", currPath, answers["template"]));
+    settings = (await import("file://" +
+        __dirname +
+        "/templates/" +
+        currPath +
+        answers["template"] +
+        "/settings.js")).default;
+    if (settings.type == "template") {
+        currPath += answers["template"] + "/template";
+        break;
+    }
+    else if ((settings.type = "sub-category")) {
+        currPath += answers["template"] + "/";
+    }
+}
+const name = (await inquirer.prompt([
     {
         name: "name",
         type: "input",
@@ -27,8 +52,7 @@ const questions = [
                 return "Project name needs to match nodejs name conventions. (/ ^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$ /)";
         },
     },
-];
-const answers = await inquirer.prompt(questions);
+]))["name"];
 const CURR_DIR = process.cwd();
 function createDirectoryContents(templatePath, newProjectPath, name) {
     fs.mkdirSync(`${CURR_DIR}/${newProjectPath}`);
@@ -50,20 +74,19 @@ function createDirectoryContents(templatePath, newProjectPath, name) {
         }
     });
 }
-createDirectoryContents(__dirname + `/templates/${answers["template"]}`, answers["name"], answers["name"]);
-if (fs
-    .readdirSync(__dirname + `/templates/${answers["template"]}`)
-    .includes("package.json")) {
-    console.log("Trying to run 'npm install' for you...");
-    exec("npm i", { cwd: CURR_DIR + "/" + answers["name"] }, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        console.log(`stdout: ${stdout}`);
+createDirectoryContents(__dirname + `/templates/${currPath}`, name, name);
+if (settings.installation) {
+    settings.installation.forEach((install) => {
+        exec(install, { cwd: CURR_DIR + "/" + name }, (error, stdout, stderr) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                return;
+            }
+            console.log(`stdout: ${stdout}`);
+        });
     });
 }

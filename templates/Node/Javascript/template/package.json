@@ -1,0 +1,17 @@
+{
+	"name": "$NAME",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "nodemon -e js --exec \"npm run start\"",
+		"start": "node ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {},
+	"devDependencies": {
+		"nodemon": "^2.0.20"
+	}
+}
